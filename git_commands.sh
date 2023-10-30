@@ -479,7 +479,8 @@ gitMergeAndPush() {
                     done
 
                     if echo "$PULL" | grep -q "CONFLICT (content): Merge conflict"; then
-                        solveConflict 'NA' 'master' 'developer'
+                        solveConflict 'NA' 'master'
+                        solveConflict 'NA' 'developer'
                     fi
                 fi
             fi
