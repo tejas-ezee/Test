@@ -458,20 +458,33 @@ gitMergeAndPush() {
     else
         if [ "${ACTIVE_BRANCH}" != "master" ] || [ "${ACTIVE_BRANCH}" != "developer" ] || [ "${ACTIVE_BRANCH}" != "live_release" ] ; then
             branchname = "${ACTIVE_BRANCH}_qa"
-            logIt "Executing >> git pull origin master"
-            PULL="$(git pull origin master)"
-            SAVEIFS=$IFS   # Save current IFS
-            IFS=$'\n'      # Change IFS to new line
-            names=($PULL) # split to array $names
-            IFS=$SAVEIFS   # Restore IFS
-            for (( i=0; i<${#names[@]}; i++ ))
-            do
-                echo "${names[$i]}"
-            done
 
-            if echo "$PULL" | grep -q "CONFLICT (content): Merge conflict"; then
-                solveConflict 'NA' 'NA' 'master'
-            fi
+            BRANCH_EXIST="$(git branch | grep ${branchname})"
+            if [ ${#BRANCH_EXIST} -ge 1 ]; then
+                echo -e "\n${RED}${BOLD}Oops!! branch ${branchname} is already exist.${NC}"
+            else
+                if [ ${#branchname} -ge 1 ]; then
+                    echo -e "\n${YELLOW}Executing >> ${BOLD}git checkout -b ${branchname}${NC}"
+                    logIt "Executing >> git checkout -b ${branchname}"
+                    git checkout -b ${branchname}
+                    logIt "Executing >> git pull origin master"
+                    PULL="$(git pull origin master)"
+                    SAVEIFS=$IFS   # Save current IFS
+                    IFS=$'\n'      # Change IFS to new line
+                    names=($PULL) # split to array $names
+                    IFS=$SAVEIFS   # Restore IFS
+                    for (( i=0; i<${#names[@]}; i++ ))
+                    do
+                        echo "${names[$i]}"
+                    done
+
+                    if echo "$PULL" | grep -q "CONFLICT (content): Merge conflict"; then
+                        solveConflict 'NA' 'master' 'developer'
+                    fi
+                 fi
+            fi  
+
+            
             # BRANCH_EXIST="$(git branch | grep ${para})"
             # if [ ${#BRANCH_EXIST} -ge 1 ]; then
             #     read -e -p "Are you sure, You want to merge branch ${para} With$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/') branch? [Yes/No] : " parareply
