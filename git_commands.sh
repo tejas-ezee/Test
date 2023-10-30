@@ -466,6 +466,7 @@ gitMergeAndPush() {
                 if [ ${#branchname} -ge 1 ]; then
                     echo -e "\n${YELLOW}Executing >> ${BOLD}git checkout -b ${branchname}${NC}"
                     logIt "Executing >> git checkout -b ${branchname}"
+                    
                     git checkout -b ${branchname}
                     logIt "Executing >> git pull origin master"
                     PULL="$(git pull origin master)"
@@ -483,17 +484,17 @@ gitMergeAndPush() {
                     fi
 
                     logIt "Executing >> git pull origin devloper"
-                    PULL="$(git pull origin devloper)"
+                    PULL_dev="$(git pull origin devloper)"
                     SAVEIFS=$IFS   # Save current IFS
                     IFS=$'\n'      # Change IFS to new line
-                    names=($PULL) # split to array $names
+                    names=($PULL_dev) # split to array $names
                     IFS=$SAVEIFS   # Restore IFS
                     for (( i=0; i<${#names[@]}; i++ ))
                     do
                         echo "${names[$i]}"
                     done
 
-                    if echo "$PULL" | grep -q "CONFLICT (content): Merge conflict"; then
+                    if echo "$PULL_dev" | grep -q "CONFLICT (content): Merge conflict"; then
                         solveConflict 'NA' 'developer'
                     fi
 
