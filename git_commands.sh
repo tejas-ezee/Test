@@ -458,7 +458,7 @@ gitMergeAndPush() {
     else
         if [ "${ACTIVE_BRANCH}" != "master" ] || [ "${ACTIVE_BRANCH}" != "developer" ] || [ "${ACTIVE_BRANCH}" != "live_release" ] ; then
 
-            BRANCH_EXIST_qa="$(git branch | grep '_qa' | grep ${ACTIVE_BRANCH}_qa)"
+            BRANCH_EXIST_qa="$(git branch | grep '_qa' | grep ${ACTIVE_BRANCH})"
             echo ${BRANCH_EXIST_qa}
             if [ ${#BRANCH_EXIST} -ge 1 ]; then
                 echo -e "\n${RED}${BOLD}Oops!! branch ${ACTIVE_BRANCH}_qa is already exist.${NC}"
