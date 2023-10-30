@@ -458,37 +458,31 @@ gitMergeAndPush() {
     else
         if [ "${ACTIVE_BRANCH}" != "master" ] || [ "${ACTIVE_BRANCH}" != "developer" ] || [ "${ACTIVE_BRANCH}" != "live_release" ] ; then
 
-            BRANCH_EXIST_qa="$(git branch | grep '_qa' | grep ${ACTIVE_BRANCH})"
-            echo ${BRANCH_EXIST_qa}
+            branchname="${ACTIVE_BRANCH}_qa"
+            BRANCH_EXIST="$(git branch | grep '_qa' | grep ${branchname})"
             if [ ${#BRANCH_EXIST} -ge 1 ]; then
-                echo -e "\n${RED}${BOLD}Oops!! branch ${ACTIVE_BRANCH}_qa is already exist.${NC}"
+                echo -e "\n${RED}${BOLD}Oops!! branch ${branchname} is already exist.${NC}"
             else
-                branchname="${ACTIVE_BRANCH}_qa"
-                BRANCH_EXIST="$(git branch | grep ${branchname})"
-                if [ ${#BRANCH_EXIST} -ge 1 ]; then
-                    echo -e "\n${RED}${BOLD}Oops!! branch ${branchname} is already exist.${NC}"
-                else
-                    if [ ${#branchname} -ge 1 ]; then
-                        echo -e "\n${YELLOW}Executing >> ${BOLD}git checkout -b ${branchname}${NC}"
-                        logIt "Executing >> git checkout -b ${branchname}"
-                        git checkout -b ${branchname}
-                        logIt "Executing >> git pull origin master"
-                        PULL="$(git pull origin master)"
-                        SAVEIFS=$IFS   # Save current IFS
-                        IFS=$'\n'      # Change IFS to new line
-                        names=($PULL) # split to array $names
-                        IFS=$SAVEIFS   # Restore IFS
-                        for (( i=0; i<${#names[@]}; i++ ))
-                        do
-                            echo "${names[$i]}"
-                        done
+                if [ ${#branchname} -ge 1 ]; then
+                    echo -e "\n${YELLOW}Executing >> ${BOLD}git checkout -b ${branchname}${NC}"
+                    logIt "Executing >> git checkout -b ${branchname}"
+                    git checkout -b ${branchname}
+                    logIt "Executing >> git pull origin master"
+                    PULL="$(git pull origin master)"
+                    SAVEIFS=$IFS   # Save current IFS
+                    IFS=$'\n'      # Change IFS to new line
+                    names=($PULL) # split to array $names
+                    IFS=$SAVEIFS   # Restore IFS
+                    for (( i=0; i<${#names[@]}; i++ ))
+                    do
+                        echo "${names[$i]}"
+                    done
 
-                        if echo "$PULL" | grep -q "CONFLICT (content): Merge conflict"; then
-                            solveConflict 'NA' 'master' 'developer'
-                        fi
+                    if echo "$PULL" | grep -q "CONFLICT (content): Merge conflict"; then
+                        solveConflict 'NA' 'master' 'developer'
                     fi
                 fi
-            fi  
+            fi
               
 
             
