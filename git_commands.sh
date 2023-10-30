@@ -451,18 +451,18 @@ gitMergeAndPush() {
     echo " 9. Merge and push branch on ${ACTIVE_BRANCH} (${IP})"
     echo -e "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${NC}"
 
-    if [ "${ACTIVE_BRANCH}" == "master" ] || [ "${ACTIVE_BRANCH}" == "developer" ] || [ "${ACTIVE_BRANCH}" == "live_release" ] ; then
+    if [ "${ACTIVE_BRANCH}" == "master" ] || [ "${ACTIVE_BRANCH}" == "developer" ] || [ "${ACTIVE_BRANCH}" == "live_release" ]; then
         echo -e "\n${RED}${BOLD}Oops!! Invalid branch. This option is available only for sub branch of master and developer live Realese branch.${NC}"
         # read -e -p "Enter branch name : " para
         # para="$(echo -e "${para}" | tr -d '[:space:]')"
     else
         if [ "${ACTIVE_BRANCH}" != "master" ] || [ "${ACTIVE_BRANCH}" != "developer" ] || [ "${ACTIVE_BRANCH}" != "live_release" ] ; then
 
-            BRANCH_EXIST_qa="$(git branch | grep ${ACTIVE_BRANCH}_qa)"
+            BRANCH_EXIST_qa="$(git branch | grep '_qa' | grep ${ACTIVE_BRANCH}_qa)"
             echo ${BRANCH_EXIST_qa}
             if [ ${#BRANCH_EXIST} -ge 1 ]; then
                 echo -e "\n${RED}${BOLD}Oops!! branch ${ACTIVE_BRANCH}_qa is already exist.${NC}"
-            else 
+            else
                 branchname="${ACTIVE_BRANCH}_qa"
                 BRANCH_EXIST="$(git branch | grep ${branchname})"
                 if [ ${#BRANCH_EXIST} -ge 1 ]; then
