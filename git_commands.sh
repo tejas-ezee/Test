@@ -480,8 +480,26 @@ gitMergeAndPush() {
 
                     if echo "$PULL" | grep -q "CONFLICT (content): Merge conflict"; then
                         solveConflict 'NA' 'master'
+                    fi
+
+                    logIt "Executing >> git pull origin devloper"
+                    PULL="$(git pull origin devloper)"
+                    SAVEIFS=$IFS   # Save current IFS
+                    IFS=$'\n'      # Change IFS to new line
+                    names=($PULL) # split to array $names
+                    IFS=$SAVEIFS   # Restore IFS
+                    for (( i=0; i<${#names[@]}; i++ ))
+                    do
+                        echo "${names[$i]}"
+                    done
+
+                    if echo "$PULL" | grep -q "CONFLICT (content): Merge conflict"; then
                         solveConflict 'NA' 'developer'
                     fi
+
+                    echo -e "\n${YELLOW}Executing >> ${BOLD}git push origin ${ACTIVE_BRANCH}${NC}"
+                    logIt "Executing >> git push origin ${ACTIVE_BRANCH}"
+                    git push origin ${ACTIVE_BRANCH}
                 fi
             fi
               
@@ -636,15 +654,10 @@ solveConflict() {
         echo -e "\n${CYAN}${BOLD}git commit -m 'Resolved conflicts'${NC}"
         logIt "git commit -m Resolved conflicts"
         git commit -m "Resolved conflicts"
-echo ${1}
-echo ${2}
-echo ${3}
         if [ $1 == "pull" ] ; then
-        echo "asdsa"
-           # mergeParaBranch $1 $2 $3
+           mergeParaBranch $1 $2 $3
         elif [ $1 == "merge" ] ; then
-           # mergeBranchWithParent $2 $3
-           echo "asdsaasdasdsadsa_Asdasdasdas_Asdsa"
+           mergeBranchWithParent $2 $3
         fi
     else
         echo -e "\n${RED}${BOLD}Operation aborted. Reverting changes.${NC}"
