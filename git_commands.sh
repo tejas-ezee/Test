@@ -810,7 +810,7 @@ read_options(){
 
 logIt() {
   #TIME="$(date +'%r')"
-  echo "BRANCH -$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/') > ${TIME} > ${IP} > $1 " >> ${LogFile}
+  echo "jj"
 # echo "${IP} > $1 " >> ${LogFile}
 }
  
