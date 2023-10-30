@@ -457,32 +457,39 @@ gitMergeAndPush() {
         # para="$(echo -e "${para}" | tr -d '[:space:]')"
     else
         if [ "${ACTIVE_BRANCH}" != "master" ] || [ "${ACTIVE_BRANCH}" != "developer" ] || [ "${ACTIVE_BRANCH}" != "live_release" ] ; then
-            branchname = "${ACTIVE_BRANCH}_qa"
 
-            BRANCH_EXIST="$(git branch | grep ${branchname})"
+            BRANCH_EXIST_qa="$(git branch | grep ${ACTIVE_BRANCH}_qa)"
+            echo ${BRANCH_EXIST_qa}
             if [ ${#BRANCH_EXIST} -ge 1 ]; then
-                echo -e "\n${RED}${BOLD}Oops!! branch ${branchname} is already exist.${NC}"
-            else
-                if [ ${#branchname} -ge 1 ]; then
-                    echo -e "\n${YELLOW}Executing >> ${BOLD}git checkout -b ${branchname}${NC}"
-                    logIt "Executing >> git checkout -b ${branchname}"
-                    git checkout -b ${branchname}
-                    logIt "Executing >> git pull origin master"
-                    PULL="$(git pull origin master)"
-                    SAVEIFS=$IFS   # Save current IFS
-                    IFS=$'\n'      # Change IFS to new line
-                    names=($PULL) # split to array $names
-                    IFS=$SAVEIFS   # Restore IFS
-                    for (( i=0; i<${#names[@]}; i++ ))
-                    do
-                        echo "${names[$i]}"
-                    done
+                echo -e "\n${RED}${BOLD}Oops!! branch ${ACTIVE_BRANCH}_qa is already exist.${NC}"
+            else 
+                branchname="${ACTIVE_BRANCH}_qa"
+                BRANCH_EXIST="$(git branch | grep ${branchname})"
+                if [ ${#BRANCH_EXIST} -ge 1 ]; then
+                    echo -e "\n${RED}${BOLD}Oops!! branch ${branchname} is already exist.${NC}"
+                else
+                    if [ ${#branchname} -ge 1 ]; then
+                        echo -e "\n${YELLOW}Executing >> ${BOLD}git checkout -b ${branchname}${NC}"
+                        logIt "Executing >> git checkout -b ${branchname}"
+                        git checkout -b ${branchname}
+                        logIt "Executing >> git pull origin master"
+                        PULL="$(git pull origin master)"
+                        SAVEIFS=$IFS   # Save current IFS
+                        IFS=$'\n'      # Change IFS to new line
+                        names=($PULL) # split to array $names
+                        IFS=$SAVEIFS   # Restore IFS
+                        for (( i=0; i<${#names[@]}; i++ ))
+                        do
+                            echo "${names[$i]}"
+                        done
 
-                    if echo "$PULL" | grep -q "CONFLICT (content): Merge conflict"; then
-                        solveConflict 'NA' 'master' 'developer'
+                        if echo "$PULL" | grep -q "CONFLICT (content): Merge conflict"; then
+                            solveConflict 'NA' 'master' 'developer'
+                        fi
                     fi
-                 fi
+                fi
             fi  
+              
 
             
             # BRANCH_EXIST="$(git branch | grep ${para})"
@@ -802,21 +809,21 @@ read_options(){
 }
 
 logIt() {
-  TIME="$(date +'%r')"
+  #TIME="$(date +'%r')"
   echo "BRANCH -$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/') > ${TIME} > ${IP} > $1 " >> ${LogFile}
-#   echo "${IP} > $1 " >> ${LogFile}
+# echo "${IP} > $1 " >> ${LogFile}
 }
  
 #IP="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"
 #IP=`who -m`
-IP=`who -m | awk -F" " '{print $5}'`
-IP="${IP/(}"
-IP="${IP/)}"
-DEV_NAME=`whoami`
-LogFile="$LogFile$(whoami)_gitshelladdcommitlogs_$(date +'%Y%m%d').log"
-if [[ ! -e ${LogFile} ]]; then
-    touch ${LogFile}
-fi
+# IP=`who -m | awk -F" " '{print $5}'`
+# IP="${IP/(}"
+# IP="${IP/)}"
+# DEV_NAME=`whoami`
+# LogFile="$LogFile$(whoami)_gitshelladdcommitlogs_$(date +'%Y%m%d').log"
+# if [[ ! -e ${LogFile} ]]; then
+#     touch ${LogFile}
+# fi
 
 while true
 do
